@@ -31,14 +31,24 @@ COPY --link . .
 # Final stage for app image
 FROM base
 
+# Install, configure litefs
+COPY --from=flyio/litefs:0.4.0 /usr/local/bin/litefs /usr/local/bin/litefs
+COPY --link litefs.yml /etc/litefs.yml
+
+# Install packages needed for deployment
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y ca-certificates fuse3 && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 # Copy built application
 COPY --from=build /app /app
 
 # Setup sqlite3 on a separate volume
-RUN mkdir -p /data
+RUN mkdir -p /data /litefs 
 VOLUME /data
-ENV DATABASE_URL="/data/sqlite.db"
+ENV DATABASE_URL="file:///litefs/sqlite.db" \
+    PORT=3001 
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start" ]
