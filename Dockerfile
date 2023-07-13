@@ -37,10 +37,12 @@ COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 # Copy built application
 COPY --from=build /app /app
 
+ADD litefs.yml /etc/litefs.yml
+
 # Setup sqlite3 on a separate volume
 RUN mkdir -p /data
 VOLUME /data
-ENV DATABASE_URL="/data/sqlite.db"
+ENV DATABASE_URL="/litefs/sqlite.db"
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000

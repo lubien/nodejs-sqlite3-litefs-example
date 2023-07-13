@@ -6,7 +6,7 @@ const dbConfig = require('./knexfile')[process.env.NODE_ENV || 'development']
 const knex = require('knex')(dbConfig);
 
 app.get('/', async (req, res) => {
-  await knex('users').insert({name: `User ${new Date().getTime()}`})
+  // await knex('users').insert({name: `User ${new Date().getTime()}`})
   const users = await knex('users').select('name')
   res.send(users.map(u => u.name).join(', '))
 })
