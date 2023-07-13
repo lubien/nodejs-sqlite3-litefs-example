@@ -31,6 +31,9 @@ COPY --link . .
 # Final stage for app image
 FROM base
 
+RUN apt-get update -y && apt-get install -y ca-certificates fuse3 sqlite3
+
+COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 # Copy built application
 COPY --from=build /app /app
 
@@ -41,4 +44,5 @@ ENV DATABASE_URL="/data/sqlite.db"
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "npm", "start" ]
+ENTRYPOINT litefs mount
+
