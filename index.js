@@ -2,8 +2,13 @@ const express = require('express')
 const app = express()
 const port = 8080
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+const dbConfig = require('./knexfile')[process.env.NODE_ENV || 'development']
+const knex = require('knex')(dbConfig);
+
+app.get('/', async (req, res) => {
+  await knex('users').insert({name: `User ${new Date().getTime()}`})
+  const users = await knex('users').select('name')
+  res.send(users.map(u => u.name).join(', '))
 })
 
 app.listen(port, () => {
