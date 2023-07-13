@@ -46,9 +46,9 @@ COPY --from=build /app /app
 # Setup sqlite3 on a separate volume
 RUN mkdir -p /data /litefs 
 VOLUME /data
-ENV DATABASE_URL="file:///litefs/sqlite.db" \
+ENV DATABASE_URL="/litefs/sqlite.db" \
     PORT=3001 
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+CMD [ "litefs", "mount" ]

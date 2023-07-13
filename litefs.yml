@@ -114,3 +114,13 @@ lease:
     # can become leader. This buffer is intended to prevent
     # overlap in leadership due to clock skew or in-flight calls.
     lock-delay: "1s"
+
+# This section defines a list of commands to run after LiteFS has connected
+# and sync'd with the cluster. You can run multiple commands but LiteFS expects
+# the last command to be long-running (e.g. an application server). When the
+# last command exits, LiteFS is shut down.
+exec:
+  - cmd: "npm run migrate"
+    if-candidate: true
+
+  - cmd: "node /app/index.js"
